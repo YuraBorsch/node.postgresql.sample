@@ -12,5 +12,10 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
   User.associate = (models) => {};
+  User.prototype.verifyPassword = function(password, callback) {
+    if (password == this.password) callback(true);
+    callback(false);
+    //return [this.firstname, this.lastname].join(' ');
+  };
   return User;
 };

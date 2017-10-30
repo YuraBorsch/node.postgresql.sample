@@ -1,6 +1,8 @@
 const todosController = require('../controllers').todos;
 const todoItemsController = require('../controllers').todoItems;
 const usersController = require('../controllers').users;
+const authController = require('../controllers').auth;
+
 
 module.exports = (app) => {
   app.get('/api', (req, res) => res.status(200).send({
@@ -13,8 +15,8 @@ module.exports = (app) => {
   app.get('/api/todos/:todoId', todosController.retrieve);
   app.put('/api/todos/:todoId', todosController.update);
   // user endpoints
-  app.get('/api/users/:userId', usersController.get);
-  app.get('/api/users', usersController.getAll);
-  app.put('/api/users/:userId', usersController.update);
-  app.post('/api/users', usersController.create);
+  app.get('/api/users/:userId', authController.isAuthenticated, usersController.get);
+  app.get('/api/users', authController.isAuthenticated, usersController.getAll);
+  app.put('/api/users/:userId', authController.isAuthenticated, usersController.update);
+  app.post('/api/users', authController.isAuthenticated, usersController.create);
 };
