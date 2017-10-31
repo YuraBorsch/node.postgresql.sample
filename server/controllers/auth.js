@@ -16,10 +16,10 @@ passport.use(new BasicStrategy(
         //if (err) { return callback(err); }
 
         // Password did not match
-        if (user.password!=password) { return callback(null, false); }
+        if (user.validatePassword(password)==true) { return callback(null, user); }
 
         // Success
-        else return callback(null, user);
+        else return callback(null, false);
     })
     .catch(err => {return callback(err);});
   }

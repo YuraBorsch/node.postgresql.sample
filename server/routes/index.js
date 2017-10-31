@@ -18,5 +18,5 @@ module.exports = (app) => {
   app.get('/api/users/:userId', authController.isAuthenticated, usersController.get);
   app.get('/api/users', authController.isAuthenticated, usersController.getAll);
   app.put('/api/users/:userId', authController.isAuthenticated, usersController.update);
-  app.post('/api/users', authController.isAuthenticated, usersController.create);
+  app.post('/api/users', usersController.create);
 };
