@@ -1,6 +1,8 @@
 'use strict';
 
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const config = require('../../config.js')
 
 module.exports = (sequelize, DataTypes) => {
     var User = sequelize.define('User', {
@@ -47,6 +49,10 @@ module.exports = (sequelize, DataTypes) => {
             password: {
                 type: DataTypes.STRING,
                 allowNull: false,
+            },
+            accessToken: {
+            type: DataTypes.STRING,
+            allowNull: true,
             }
         }
     );
@@ -63,15 +69,28 @@ module.exports = (sequelize, DataTypes) => {
     });
     // validates password
     User.prototype.validatePassword = function (password) {
-        console.log(password);
         return bcrypt.compareSync(password, this.password);
     }
-    // override toJSON to hide the user password
+    // overrides toJSON to hide the user password
     User.prototype.toJSON = function () {
         var values = Object.assign({}, this.get());
         delete values.password;
+        delete values.accessToken;
         return values;
     }
+    // generates JWT
+    User.prototype.generateJwt = function() {
+        var expiry = new Date();
+        expiry.setDate(expiry.getDate() + 7);
+
+        return jwt.sign({
+            _id: this._id,
+            email: this.email,
+            name: this.name,
+            exp: parseInt(expiry.getTime() / 1000),
+        }, config.jwt_secret);
+    };
+
 
     return User;
 };
