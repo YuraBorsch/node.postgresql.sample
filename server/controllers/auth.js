@@ -30,7 +30,7 @@ passport.use(new BasicStrategy(
 
 
 passport.use(new BearerStrategy(
-    function(token, callback) {
+    (token, callback) => {
         console.log('token', token);
         User.findOne({where:{ accessToken: token }})
             .then(user => {
