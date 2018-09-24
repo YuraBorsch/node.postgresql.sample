@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const logger = require('morgan');
 const User = require('../models').User;
 
 
@@ -26,6 +27,29 @@ module.exports = {
     get(req, res) {
         return User
             .findById(req.params.userId)
+            .then(user => {
+                if (!user) {
+                    return res.status(404).send({
+                        message: 'User Not Found',
+                    });
+                }
+                return res.status(200).send(user);
+            })
+            .catch(error => res.status(400).send(error));
+    },
+    getCurrent(req, res) {
+        var token;
+        var authHeader = req.headers['authorization'];
+        if (authHeader.startsWith("Bearer ")){
+            token = authHeader.substring(7, authHeader.length);
+        } else {
+            res.status(400).send({
+                message: 'User Not Found',
+            });
+        }
+        //console.log("getCurrent, token="+token);
+        return User
+            .findOne({where:{ accessToken: token }})
             .then(user => {
                 if (!user) {
                     return res.status(404).send({
